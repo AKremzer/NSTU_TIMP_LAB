@@ -1,5 +1,5 @@
 import React from "react";
-
+import styled from "styled-components";
 /*
 ______________________
 |  day/month/year  x | header: часть календаря c выбором масштаба и прочими настройками
@@ -14,9 +14,14 @@ ______________________
 ----------------------
 */
 
+const MainDivStyle = styled.div`
+    background-color: #F8F8FF;
+    height: 5vh;
+`
+// TODO
 const CalendarHeader = () => {
     return(
-        <div>CalendarHeader</div>
+        <MainDivStyle>CalendarHeader</MainDivStyle>
     );
 };
 
