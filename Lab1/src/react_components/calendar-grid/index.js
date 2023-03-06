@@ -33,10 +33,10 @@ const GridStyle = styled.div`
 `
 
 // клетка сетки
-// ширина и высота клетки зависят от ширины и высоты окна (5 и 10%)
+// ширина и высота клетки зависят от ширины и высоты окна (12 и 11%)
 const CellStyle = styled.div`
-    min-width: 5vw;
-    min-height: 10vh;
+    min-width: 12vw;
+    min-height: 11vh;
     background-color: ${props => props.isWeekend ? '#dfdfe6' : '#F8F8FF'};
 `
 // надписи внутри сетки
