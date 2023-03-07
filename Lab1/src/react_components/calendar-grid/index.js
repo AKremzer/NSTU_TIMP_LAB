@@ -52,10 +52,18 @@ const DateStyle = styled.div`
     justify-content: center;
 `
 
-const CalendarGrid = ({pageFirstDay}) => {
-    let startDay = moment(pageFirstDay).subtract(1, "day"); // из первого дня на странице нужно вычесть 1, так как потом в map к первому дню сразу же прибавится 1
-    let daysArray = [...Array(42)].map(() => moment(startDay.add(1, "day"))); // в календарной сетке 6 недель и 42 ячейки, с помощью map в каждую ячейку пишем день
-    return(                                                                   // на 1 больший предыдущего
+class CalendarGrid extends React.Component {                                            // это React компонент
+    constructor(props) {                                                                // конструктор, который использует переданные элементу props 
+        super(props);                                                                   // эта строка вызывает родительский конструктор (конструктор React.Component), чтобы работало наследование
+        this.state = {
+            startDay: moment(props.pageFirstDay).subtract(1, "day")                     // из первого дня на странице нужно вычесть 1, так как потом в map к первому дню сразу же прибавится 1
+        };
+    }
+    
+    render() {                                                                               // метод render сообщает, как должен отрисовываться элемент на странице
+        let daysArray = [...Array(42)].map(() => moment(this.state.startDay.add(1, "day"))); // в календарной сетке 6 недель и 42 ячейки, с помощью map в каждую ячейку
+                                                                                             // пишем день на 1 больший предыдущего
+        return(               
         <GridStyle> 
         {
             daysArray.map((dayObject) => (                          
@@ -70,7 +78,10 @@ const CalendarGrid = ({pageFirstDay}) => {
             ))
         }
         </GridStyle>
-    ); // с помощью map для каждого объекта массива дней вычисляется уникальный ключ для ячейки в виде полной даты, а день форматируется как число дня
-};
+    ); 
+    }
+                                                                                             // с помощью map для каждого объекта массива дней вычисляется уникальный ключ 
+                                                                                             // для ячейки в виде полной даты, а день форматируется как число дня
+}
 
 export { CalendarGrid };
