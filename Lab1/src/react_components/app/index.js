@@ -15,11 +15,14 @@ function App() {
     moment.updateLocale("en", {week: {dow: 1}}); // локаль надо менять, потому что здесь неделя начинается с воскресенья
     let pageFirstDay = moment().startOf("month").startOf("week");
     
+    // ниже CalendarStyle, CalendarHeader - это все React-элементы (компоненты)
+    // на 22 строке компоненту CalendarGrid передаются props, в самом элементе к pageFirstDay потом можно будет
+    // обратиться как к props.pageFirstDay
   return (
     <CalendarStyle>
       <CalendarHeader />
       <CalendarTitle />
-      <CalendarGrid pageFirstDay = {pageFirstDay}/>
+      <CalendarGrid pageFirstDay = {pageFirstDay}/> 
     </CalendarStyle>
   );
 }
