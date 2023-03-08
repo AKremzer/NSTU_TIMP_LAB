@@ -42,6 +42,7 @@ const CellStyle = styled.div`
 // надписи внутри сетки
 const CellRowStyle = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
 `
 // выделение текущего дня
@@ -52,11 +53,38 @@ const DateStyle = styled.div`
     justify-content: center;
 `
 
+// отображение дня в правом углу
+const ShowDateStyle = styled.div`
+    display: flex;
+    justify-content: flex-end;
+`
+
+// отображение списка задач (ul - неупорядоченный список)
+const EventListStyle = styled.ul`
+    margin: 0;
+    list-style-position: inside;
+    padding-left: 5%;
+`
+
+// отображение отдельных задач (button, т.к. при нажатии на задачу нужно ее редактировать)
+const EventItemStyle = styled.button`
+    position: relative;
+    left: -10px;
+    overflow: hidden;
+    border: 0;
+    background: 0;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+`
+
 class CalendarGrid extends React.Component {                                            // это React компонент
     constructor(props) {                                                                // конструктор, который использует переданные элементу props 
         super(props);                                                                   // эта строка вызывает родительский конструктор (конструктор React.Component), чтобы работало наследование
         this.state = {
-            startDay: moment(props.pageFirstDay).subtract(1, "day")                     // из первого дня на странице нужно вычесть 1, так как потом в map к первому дню сразу же прибавится 1
+            startDay: moment(props.pageFirstDay).subtract(1, "day"),                    // из первого дня на странице нужно вычесть 1, так как потом в map к первому дню сразу же прибавится 1
+            events: props.grid_events
         };
     }
     
@@ -67,12 +95,24 @@ class CalendarGrid extends React.Component {                                    
         <GridStyle> 
         {
             daysArray.map((dayObject) => (                          
-                <CellStyle key={dayObject.format("DDMMYYYY")} 
-                           isWeekend={dayObject.day() == 6 || dayObject.day() == 0}>      
+                <CellStyle key={dayObject.format("DDMMYYYY")} isWeekend={dayObject.day() == 6 || dayObject.day() == 0}>      
                     <CellRowStyle>
+                        <ShowDateStyle>
                         <DateStyle>
                             {dayObject.format('D')}                 
                         </DateStyle>
+                        </ShowDateStyle>
+                        <EventListStyle>
+                            {
+                                /* к строке ниже: в ячейке будут отображаться только те задачи, у которых время находится между началом и концом выбранного дня */
+                                this.state.events.filter(event => event.date >= dayObject.format('X') && event.date <= moment(dayObject).endOf("day").format("X"))
+                                                 .map(event => (<li key = {event.id}>
+                                                                    <EventItemStyle>
+                                                                        {event.title}
+                                                                    </EventItemStyle>
+                                                                </li>))
+                            }
+                        </EventListStyle>
                     </CellRowStyle>
                 </CellStyle>
             ))
