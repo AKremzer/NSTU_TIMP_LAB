@@ -50,6 +50,7 @@ const DateStyle = styled.div`
     height: 30%;
     width: 30%;
     display: flex;
+    cursor: pointer;
     justify-content: center;
 `
 
@@ -79,35 +80,27 @@ const EventItemStyle = styled.button`
     text-align: left;
 `
 
-class CalendarGrid extends React.Component {                                            // это React компонент
-    constructor(props) {                                                                // конструктор, который использует переданные элементу props 
-        super(props);                                                                   // эта строка вызывает родительский конструктор (конструктор React.Component), чтобы работало наследование
-        this.state = {
-            startDay: moment(props.pageFirstDay).subtract(1, "day"),                    // из первого дня на странице нужно вычесть 1, так как потом в map к первому дню сразу же прибавится 1
-            events: props.grid_events
-        };
-    }
-    
-    render() {                                                                               // метод render сообщает, как должен отрисовываться элемент на странице
-        let daysArray = [...Array(42)].map(() => moment(this.state.startDay.add(1, "day"))); // в календарной сетке 6 недель и 42 ячейки, с помощью map в каждую ячейку
+const CalendarGrid = ({pageFirstDay, grid_events, openForm}) => {
+        let startDay = pageFirstDay.clone().subtract(1, "day");
+        let daysArray = [...Array(42)].map(() => moment(startDay.add(1, "day"))); // в календарной сетке 6 недель и 42 ячейки, с помощью map в каждую ячейку
                                                                                              // пишем день на 1 больший предыдущего
-        return(               
-        <GridStyle> 
+        return(
+        <GridStyle>
         {
-            daysArray.map((dayObject) => (                          
-                <CellStyle key={dayObject.format("DDMMYYYY")} isWeekend={dayObject.day() == 6 || dayObject.day() == 0}>      
+            daysArray.map((dayObject) => (
+                <CellStyle key={dayObject.format("DDMMYYYY")} isWeekend={dayObject.day() == 6 || dayObject.day() == 0}>
                     <CellRowStyle>
                         <ShowDateStyle>
-                        <DateStyle>
-                            {dayObject.format('D')}                 
+                        <DateStyle onDoubleClick =  {() => openForm("Create", { title: "", description: "", date: dayObject.format('X')})}>
+                            {dayObject.format('D')}
                         </DateStyle>
                         </ShowDateStyle>
                         <EventListStyle>
                             {
                                 /* к строке ниже: в ячейке будут отображаться только те задачи, у которых время находится между началом и концом выбранного дня */
-                                this.state.events.filter(event => event.date >= dayObject.format('X') && event.date <= moment(dayObject).endOf("day").format("X"))
+                                grid_events.filter(event => event.date >= dayObject.format('X') && event.date <= moment(dayObject).endOf("day").format("X"))
                                                  .map(event => (<li key = {event.id}>
-                                                                    <EventItemStyle>
+                                                                    <EventItemStyle onDoubleClick = {() => openForm("Update", event)}>
                                                                         {event.title}
                                                                     </EventItemStyle>
                                                                 </li>))
@@ -118,9 +111,8 @@ class CalendarGrid extends React.Component {                                    
             ))
         }
         </GridStyle>
-    ); 
-    }
-                                                                                             // с помощью map для каждого объекта массива дней вычисляется уникальный ключ 
+    );
+                                                                                             // с помощью map для каждого объекта массива дней вычисляется уникальный ключ
                                                                                              // для ячейки в виде полной даты, а день форматируется как число дня
 }
 
