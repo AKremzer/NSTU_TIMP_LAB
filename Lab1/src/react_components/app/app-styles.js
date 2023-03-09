@@ -22,8 +22,11 @@ export const FormPosStyle = styled.div`
 // стиль формы
 export const FormStyle = styled(CalendarStyle)`
   width: 20vw;
+  height:18vh;
   background-color: aliceblue;
   box-shadow: unset;
+  min-width: 190px;
+  min-height: 100px;
 `
 // записи в календаре
 export const EventStyle = styled.input`
@@ -34,13 +37,14 @@ export const EventStyle = styled.input`
   outline: 0;
   border-bottom: 1px solid #c6c6cc;
   background-color: aliceblue;
-  color: #c6c6cc;
+  color: #8b8b8f;
 `
 
 export const ButtonsWrap = styled.div`
   margin-bottom: 5px;
   margin-left: 1px;
   margin-right: 1px;
+  text-align: center;
 `
 
 // кнопки внутри формы
@@ -48,7 +52,7 @@ export const ButtonsStyle = styled.button`
   justify-items: center;
   outline: none;
   border: none;
-  height: 4vh;
+  height: 25px;
   background-color: #e5e5eb;
   border-radius: 5px;
   margin-top: 10%;
