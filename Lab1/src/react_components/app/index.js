@@ -4,66 +4,95 @@ import {CalendarTitle} from "../calendar-title";
 import {CalendarGrid} from "../calendar-grid";
 import {CalendarStyle, FormPosStyle, FormStyle, EventStyle, ButtonsWrap, ButtonsStyle} from './app-styles'
 
-// ссылка, по которой лежит сервер с нашими данными
+// расположение json-server
 const jsonUrl = `http://localhost:3001`;
+
+// функциональный компонент App, отвечающий за отрисовку сетки и заголовка календаря, а также формы ввода событий
 function App() {
-    const [method, setMethod] = useState(null); // метод, выбранный в форме события (добавить новое событие или изменить старое)
-    const [event, setEvent] = useState(null); // выбранное событие для редактирования/добавления
-    const [isFormShowing, setShowForm] = useState(false); // определение того, нужно показывать форму для ввода событий или нет
-    const [events, setEvents] = useState([]); // события, которые отображаются на данной странице календаря
-    const [today, setToday] = useState(moment())
+    // хуки функционального компонента
+    const [method, setMethod] = useState(null);             // установка метода для открытия формы ввода
+    const [event, setEvent] = useState(null);               // установка события, которое открывается в форме ввода
+    const [isFormShowing, setShowForm] = useState(false);   // установка открытия/закрытия формы
+    const [events, setEvents] = useState([]);               // установка списка событий на текущий месяц
+    const [today, setToday] = useState(moment())                     // установка текущего дня для отсчета отображаемых дней
 
-    moment.updateLocale("en", {week: {dow: 1}}); // локаль надо менять, потому что здесь неделя начинается с воскресенья
-    let pageFirstDay = today.clone().startOf("month").startOf("week");
+    moment.updateLocale("en", {week: {dow: 1}});
 
-    // ниже: метка первого дня на странице календаря определенного месяца и последнего, чтобы выводить только события на этой странице
-    const startDayFilter = moment(pageFirstDay).format('X');
+    let pageFirstDay = today.clone().startOf("month").startOf("week"); // первый день, отображаемый на странице календаря
+    const startDayFilter = moment(pageFirstDay).format('X');                        // левая граница для поиска событий, попадающих в этот месяц
+    const endDayFilter = moment(pageFirstDay).add(42, "days");                 // правая граница для поиска событий, попадающих в этот месяц
 
-    window.moment = moment;
-    const endDayFilter = moment(pageFirstDay).add(42, "days");
+    // хук, используемый для обращения к серверу для получения событий, попадающих в этот месяц, после загрузки компонента
     useEffect(() => {
-        // fetch получает наши данные о записях по заданной ссылке и фильтру, описанному выше, эти данные преобразуются в json и хранятся в events
+        // запрос в fetch использует фильтр (дата события больше, чем у первого дня на странице, но меньше, чем у последнего)
         fetch(`${jsonUrl}/events?date_gte=${startDayFilter}&date_lte${endDayFilter}`)
             .then(res => res.json())
             .then(res => setEvents(res));
-    },[today]); // TODO себе: добавить зависимость после того, как будет готово перелистывание месяцев
+    },[today]);
 
-    // это хуки - они позволяют функциональному компоненту, которым является function App, иметь свое состояние
-    // позже я попробую переписать этот компонент под классовый, чтобы он мог иметь состояние без этих конструкций
-    // пока оставляю так, о хуках: https://reactjs.org/docs/hooks-intro.html, о компонентах: https://reactjs.org/docs/components-and-props.html
 
-    // открытие формы ввода для выбранного события и действия (обновление или создание нового события)
+    /**
+     * Открывает форму ввода событий
+     *
+     * @remarks
+     * В зависимости от того, существует ли событие в данной ячейке, в форме будет доступно редактирование
+     * существующего события или создание нового
+     *
+     * @param methodName - метод формы, зависящий от наличия в ячейке события
+     * @param eventToUpdate - событие, которое необходимо изменить
+     */
     const openForm = (methodName, eventToUpdate) => {
-        console.log("fd", methodName);
         setShowForm(true);
         setEvent(eventToUpdate);
         setMethod(methodName);
     }
 
-    // обработка нажатия на кнопку отмены
+    /**
+     * Обработка нажатия на кнопку "Отмена" формы
+     */
     const cancelButton = () => {
         setShowForm(false);
         setEvent(null);
     }
 
-    // здесь при изменении значения в форме ввода соответствующему полю события присваивается новое значение
+    /**
+     * Изменяет значение события по вводу в форму
+     *
+     * @remarks
+     * В зависимости от выбранного поля будут изменены поля title или description события
+     *
+     * @param text - текст, полученный из формы
+     * @param field - поле формы, в котором были произведены изменения
+     */
     const changeEvent = (text, field) => {
+        // оператор расширения ... обусловлен тем, что при его отсутствии новое значение будет не присвоено
+        // старому состоянию, а будет записано в новое состояние, которое в свою очередь будет записано в поле event
+        // старого состояния
         setEvent(previousState => ({...previousState, [field]:text}));
     }
 
-    // обновление либо создание события (в этом методе к серверу подаются запросы POST (для создания новой записи)
-    // или PATCH (для внесения изменений в старую запись)
-    const eventHandler = () => {
-        const url = method == "Update" ? `${jsonUrl}/events/${event.id}` : `${jsonUrl}/events`; // если нужно обновить запись, обращение идет по ссылке на запись
-        const httpMethod = method == "Update" ? 'PATCH' : 'POST';
-        fetch(url, {
-            method: httpMethod,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(event)
-        }).then(res => res.json()).then(res => {
-            if(method == "Create")
+    /**
+     * Обработка нажатий кнопок внутри формы ввода
+     *
+     * @remarks
+     * Изменение состояния компонента App идет после обращения к серверу данных
+     * Обрабатываются добавление нового события/изменение старого/удаление события
+     */
+
+    const eventHandler = (e) => {
+        const url = (method == "Update" || e.target.id == "Delete") ? // при обращении к существующему элементу ссылка должна содержать id,
+              `${jsonUrl}/events/${event.id}` : `${jsonUrl}/events`;
+        const httpMethod = e.target.id == "Delete" ?                  // выбор HTTP-метода для обращения к серверу
+              'DELETE' : (method == "Update" ? 'PATCH' : 'POST');     // POST - создание события, PATCH - редактирование,DELETE - удаление
+        let options = {
+           method: httpMethod,
+           headers: { 'Content-Type': 'application/json' },
+        }
+        if (e.target.id != "Delete") options.body = JSON.stringify(event);
+        fetch(url, options).then(res => res.json()).then(res => {           // изменение состояния events в зависимости от совершенного действия
+            if(e.target.id == "Delete")
+                setEvents(state => state.filter(thisEvent => thisEvent.id != event.id));
+            else if(method == "Create")
                 setEvents(state => [...state, res]);
             else {
                 setEvents(state => state.map(event => event.id == res.id ? res : event));
@@ -72,26 +101,29 @@ function App() {
         });
     }
 
-    // удаление события (в этом методе к серверу подается запрос DELETE для удаления записи по id
-    const removeEventHandler = () => {
-        const url = `${jsonUrl}/events/${event.id}`;
-        const httpMethod = "DELETE";
-
-        fetch(url, {
-            method: httpMethod,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => res.json()).then(res => {
-            setEvents(state => state.filter(thisEvent => thisEvent.id != event.id));
-            cancelButton();
-        })
-    }
-
-    //перелистывание месяцев
+    /**
+     * Перелистывание календаря на месяц назад
+     *
+     * @remarks
+     * Изменяет состояние today для вычисления новых границ страницы календаря
+     */
     const prevPageHandler = () => setToday(prev => prev.clone().subtract(1,'month'));
+    /**
+     * Перелистывание календаря на сегодняшний день
+     *
+     * @remarks
+     * Изменяет состояние today для вычисления новых границ страницы календаря
+     */
     const todayPageHandler = () => setToday(moment());
+    /**
+     * Перелистывание календаря на месяц вперед
+     *
+     * @remarks
+     * Изменяет состояние today для вычисления новых границ страницы календаря
+     */
     const nextPageHandler = () => setToday(prev => prev.clone().add(1,'month'))
+
+    // отрисовка компонента App
     return (
         <>
             {
@@ -106,8 +138,8 @@ function App() {
                             />
                             <ButtonsWrap>
                                 <ButtonsStyle onClick={cancelButton}>Cancel</ButtonsStyle>
-                                <ButtonsStyle onClick={eventHandler}>{method}</ButtonsStyle>
-                                <ButtonsStyle onClick={removeEventHandler}>Delete</ButtonsStyle>
+                                <ButtonsStyle id="Edit" onClick={eventHandler}>{method}</ButtonsStyle>
+                                <ButtonsStyle id="Delete" onClick={eventHandler}>Delete</ButtonsStyle>
                             </ButtonsWrap>
                         </FormStyle>
                     </FormPosStyle>
