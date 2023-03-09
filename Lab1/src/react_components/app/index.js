@@ -76,10 +76,12 @@ function App() {
     const [today, setToday] = useState(moment())
 
     moment.updateLocale("en", {week: {dow: 1}}); // локаль надо менять, потому что здесь неделя начинается с воскресенья
-    let pageFirstDay = moment(today).startOf("month").startOf("week");
+    let pageFirstDay = today.clone().startOf("month").startOf("week");
 
     // ниже: метка первого дня на странице календаря определенного месяца и последнего, чтобы выводить только события на этой странице
     const startDayFilter = moment(pageFirstDay).format('X');
+
+    window.moment = moment;
     const endDayFilter = moment(pageFirstDay).add(42, "days");
     useEffect(() => {
         // fetch получает наши данные о записях по заданной ссылке и фильтру, описанному выше, эти данные преобразуются в json и хранятся в events
