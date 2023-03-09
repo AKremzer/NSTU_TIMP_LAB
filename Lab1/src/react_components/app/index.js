@@ -14,12 +14,12 @@ function App() {
     const [event, setEvent] = useState(null);               // установка события, которое открывается в форме ввода
     const [isFormShowing, setShowForm] = useState(false);   // установка открытия/закрытия формы
     const [events, setEvents] = useState([]);               // установка списка событий на текущий месяц
-    const [today, setToday] = useState(moment())                     // установка текущего дня для отсчета отображаемых дней
+    const [today, setToday] = useState(moment())            // установка текущего дня для отсчета отображаемых дней
 
     moment.updateLocale("en", {week: {dow: 1}});
 
-    let pageFirstDay = today.clone().startOf("month").startOf("week"); // первый день, отображаемый на странице календаря
-    const startDayFilter = moment(pageFirstDay).format('X');                        // левая граница для поиска событий, попадающих в этот месяц
+    let pageFirstDay = today.clone().startOf("month").startOf("week");         // первый день, отображаемый на странице календаря
+    const startDayFilter = moment(pageFirstDay).format('X');                   // левая граница для поиска событий, попадающих в этот месяц
     const endDayFilter = moment(pageFirstDay).add(42, "days");                 // правая граница для поиска событий, попадающих в этот месяц
 
     // хук, используемый для обращения к серверу для получения событий, попадающих в этот месяц, после загрузки компонента
