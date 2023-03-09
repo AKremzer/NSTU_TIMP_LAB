@@ -88,7 +88,8 @@ function App() {
     const [method, setMethod] = useState(null); // метод, выбранный в форме события (добавить новое событие или изменить старое)
     const [event, setEvent] = useState(null); // выбранное событие для редактирования/добавления
     const [isFormShowing, setShowForm] = useState(false); // определение того, нужно показывать форму для ввода событий или нет
-    const[events, setEvents] = useState([]); // события, которые отображаются на данной странице календаря
+    const [events, setEvents] = useState([]); // события, которые отображаются на данной странице календаря
+    const [today, setToday] = useState(moment())
 
     // открытие формы ввода для выбранного события и действия (обновление или создание нового события)
     const openForm = (methodName, eventToUpdate) => {
@@ -145,10 +146,11 @@ function App() {
             cancelButton();
         })
     }
-
-    const prevPageHandler = () => console.log('prev')
-    const todayPageHandler = () => console.log('today')
-    const nextPageHandler = () => console.log('next')
+    
+    //перелистывание месяцев
+    const prevPageHandler = () => setToday(prev => prev.clone().subtract(1,'month'));
+    const todayPageHandler = () => setToday(moment());
+    const nextPageHandler = () => setToday(prev => prev.clone().add(1,'month'))
   return (
       <>
           {
@@ -173,7 +175,7 @@ function App() {
           <CalendarStyle>
               <CalendarHeader />
               <CalendarTitle
-               //today ={today}
+               today ={today}
                prevPageHandler ={prevPageHandler}
                todayPageHandler ={todayPageHandler}
                nextPageHandler ={nextPageHandler}
