@@ -34,6 +34,8 @@ const ButtonStyle = styled.button`
     background-color: #dfdfe6;
     padding-right: 10px;
     padding-left: 10px;
+    outline: unset;
+    cursor: pointer;
 `
 
 const CalendarTitle = ({ today, prevPageHandler, todayPageHandler, nextPageHandler }) => {
