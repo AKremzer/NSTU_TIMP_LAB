@@ -36,7 +36,7 @@ const ButtonStyle = styled.button`
     padding-left: 10px;
 `
 
-const CalendarTitle = ({ prevPageHandler, todayPageHandler, nextPageHandler }) => {
+const CalendarTitle = ({ today, prevPageHandler, todayPageHandler, nextPageHandler }) => {
     return(
         <MainDivStyle>
             <div>
