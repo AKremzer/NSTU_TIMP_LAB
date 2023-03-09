@@ -27,9 +27,9 @@ class CalendarGrid extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pageFirstDay: this.props.pageFirstDay, // первый день на странице календаря
-            grid_events: this.props.grid_events,   // события, попадающие на страницу календаря
-            openForm: this.props.openForm          // функция для открытия формы
+            pageFirstDay: this.props.pageFirstDay, 
+            grid_events: this.props.grid_events,   
+            openForm: this.props.openForm          
         }
     }
 
