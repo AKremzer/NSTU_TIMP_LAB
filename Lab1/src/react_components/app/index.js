@@ -131,9 +131,11 @@ function App() {
                     <FormPosStyle>
                         <FormStyle>
                             <EventStyle value = {event.title}
+                                        placeholder = "Название"
                                         onChange = {e => changeEvent(e.target.value, "title")}
                             />
                             <EventStyle value = {event.description}
+                                        placeholder = "Описание"
                                         onChange = {e => changeEvent(e.target.value, "description")}
                             />
                             <ButtonsWrap>
