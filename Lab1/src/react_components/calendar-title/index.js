@@ -1,7 +1,17 @@
 import React from "react";
 import {MainDivStyle, TextStyle, ButtonStyle} from "./calendar-title-styles"
 
-// функциональный компонент CalendarTitle, отвечающий за детальную отрисовку шапки календаря
+/**
+ * Функциональный компонент CalendarTitle, отвечающий за детальную отрисовку шапки календаря
+ *
+ * @param today - текущий день, используемый для расчета отображаемых на странице дней
+ * @param prevPageHandler - функция для перелистывания календаря на месяц назад
+ * @param todayPageHandler - функция для перелистывания календаря на текущий месяц
+ * @param nextPageHandler - функция для перелистывания календаря на месяц вперед
+ *
+ * @returns
+ * HTML-элемент CalendarTitle, содержащий шапку календаря
+ */
 const CalendarTitle = ({ today, prevPageHandler, todayPageHandler, nextPageHandler }) => {
     return(
         <MainDivStyle>
