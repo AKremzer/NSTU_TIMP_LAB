@@ -13,7 +13,16 @@ import {GridStyle, DateStyle, ShowDateStyle, CellStyle,
  */
 const isCurrentDay = (day) => moment().isSame(day, 'day') ;
 
-// функциональный компонент CalendarGrid, отвечающий за детальную отрисовку сетки календаря
+/**
+ * Классовый компонент CalendarGrid, отвечающий за детальную отрисовку сетки календаря
+ *
+ * @param pageFirstDay - первый день на странице календаря
+ * @param grid_events - события, попадающие на страницу календаря
+ * @param openForm - функция для открытия формы
+ *
+ * @returns
+ * HTML-элемент CalendarGrid, содержащий сетку календаря
+ */
 class CalendarGrid extends React.Component {
     constructor(props) {
         super(props);
@@ -84,3 +93,4 @@ class CalendarGrid extends React.Component {
 }
 
 export { CalendarGrid };
+
