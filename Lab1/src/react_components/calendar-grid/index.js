@@ -27,16 +27,17 @@ ______________________
 const GridStyle = styled.div` 
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: repeat(6, 1fr);
+    //grid-template-rows: repeat(6, 1fr);
     grid-gap: 1.5px;
-    background-color: #c6c6cc;
+    background-color: ${props => props.isHeader ? 'F8F8FF' : '#c6c6cc' };
+    ${props => props.isHeader && 'border-bottom: 1px solid #c6c6cc'} 
 `
 
 // клетка сетки
 // ширина и высота клетки зависят от ширины и высоты окна (12 и 11%)
 const CellStyle = styled.div`
     min-width: 12vw;
-    min-height: 11vh;
+    min-height: ${props => props.isHeader ? 2 : 11 }vh;
     background-color: ${props => props.isWeekend ? '#dfdfe6' : '#F8F8FF'};
 `
 // надписи внутри сетки
@@ -94,6 +95,7 @@ width: 100%;
 //функция что день реально сегодняшний, отображение корректной даты
 const isCurrentDay = (day) => moment().isSame(day, 'day') ;
 
+
 const CalendarGrid = ({pageFirstDay, grid_events, openForm}) => {
         let startDay = pageFirstDay.clone().subtract(1, "day");
         let daysArray = [...Array(42)].map(() => moment(startDay.add(1, "day"))); // в календарной сетке 6 недель и 42 ячейки, с помощью map в каждую ячейку
@@ -101,10 +103,23 @@ const CalendarGrid = ({pageFirstDay, grid_events, openForm}) => {
 
                                                                                              
         return(
-        <GridStyle>
+    //фрагмент рендерит пропсы
+     <>                     
+        <GridStyle isHeader>
+             {[...Array(7)].map((_,i) =>  (
+             <CellStyle isHeader>
+                <CellRowStyle justifyContent={'flex-end'}>
+            {moment().day(i+1).format('ddd')} 
+                </CellRowStyle>
+             </CellStyle>
+            ))} 
+             </GridStyle>
+        <GridStyle>    
         {
             daysArray.map((dayObject) => (
-                <CellStyle key={dayObject.format("DDMMYYYY")} isWeekend={dayObject.day() == 6 || dayObject.day() == 0}>
+                <CellStyle key={dayObject.format("DDMMYYYY")} isWeekend={dayObject.day() == 6 || dayObject.day() == 0}
+                  key = {dayObject.unix()}
+                  >
                     <CellRowStyle>
                         <ShowDateStyle>
                         <DateStyle onDoubleClick =  {() => openForm("Create", { title: "", description: "", date: dayObject.format('X')})}>
@@ -128,6 +143,7 @@ const CalendarGrid = ({pageFirstDay, grid_events, openForm}) => {
             ))
         }
         </GridStyle>
+     </>
     );
     // с помощью map для каждого объекта массива дней вычисляется уникальный ключ
     // для ячейки в виде полной даты, а день форматируется как число дня
