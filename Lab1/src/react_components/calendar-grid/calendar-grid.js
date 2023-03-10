@@ -66,7 +66,7 @@ class CalendarGrid extends React.Component {
                                 <CellRowStyle>
                                     <ShowDateStyle>
                                         {/* создание события при двойном клике по дате */}
-                                        <DateStyle onDoubleClick =  {() => this.state.openForm("Create", { title: "", description: "", date: dayObject.format('X')})}>
+                                        <DateStyle onDoubleClick =  {() => this.state.openForm("Создать", { title: "", description: "", date: dayObject.format('X')})}>
                                             {
                                                 /* подсветка сегодняшнего дня */
                                                 isCurrentDay(dayObject) ? (<CurrentDay> {dayObject.format('D')}</CurrentDay>) : dayObject.format('D')
@@ -79,7 +79,7 @@ class CalendarGrid extends React.Component {
                                             this.state.grid_events.filter(event => event.date >= dayObject.format('X') && event.date <= moment(dayObject).endOf("day").format("X"))
                                                 .map(event => (<li key = {event.id}>
                                                     {/* редактирование события при двойном клике по событию */}
-                                                    <EventItemStyle onDoubleClick = {() => this.state.openForm("Update", event)}>
+                                                    <EventItemStyle onDoubleClick = {() => this.state.openForm("Изменить", event)}>
                                                         {event.title}
                                                     </EventItemStyle>
                                                 </li>))
@@ -93,7 +93,6 @@ class CalendarGrid extends React.Component {
             </div>
         );
     }
-
 }
 
 export { CalendarGrid };
