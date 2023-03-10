@@ -101,11 +101,9 @@ function App() {
         fetch(url, options).then(res => res.json()).then(res => {           // изменение состояния events в зависимости от совершенного действия
             if(e.target.id == "Delete")
                 setEvents(state => state.filter(thisEvent => thisEvent.id != event.id));
-            else if(method == "Create")
+            else if(method == "Создать")
                 setEvents(state => [...state, res]);
-            else {
-                setEvents(state => state.map(event => event.id == res.id ? res : event));
-            }
+            else setEvents(state => state.map(event => event.id == res.id ? res : event));
             cancelButton();
         });
     }
