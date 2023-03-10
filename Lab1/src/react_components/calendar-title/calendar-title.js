@@ -23,6 +23,10 @@ class CalendarTitle extends React.Component  {
         }
     }
 
+    capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.today !== prevState.today) {
             return ({ today: nextProps.today,
@@ -37,12 +41,12 @@ class CalendarTitle extends React.Component  {
         return (
             <MainDivStyle>
                 <div>
-                    <TextStyle><b>{this.state.today.format('MMMM')}</b></TextStyle>
+                    <TextStyle><b>{this.capitalizeFirstLetter(this.state.today.format('MMMM'))}</b></TextStyle>
                     <TextStyle> {this.state.today.format('YYYY')}</TextStyle>
                 </div>
                 <div>
                     <ButtonStyle onClick={this.state.prevPageHandler}>&lt;</ButtonStyle>
-                    <ButtonStyle onClick={this.state.todayPageHandler}>Today</ButtonStyle>
+                    <ButtonStyle onClick={this.state.todayPageHandler}>Сегодня</ButtonStyle>
                     <ButtonStyle onClick={this.state.nextPageHandler}>&gt;</ButtonStyle>
                 </div>
             </MainDivStyle>
