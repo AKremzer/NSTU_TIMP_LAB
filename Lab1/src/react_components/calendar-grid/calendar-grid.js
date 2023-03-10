@@ -27,17 +27,21 @@ class CalendarGrid extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pageFirstDay: this.props.pageFirstDay, 
-            grid_events: this.props.grid_events,   
-            openForm: this.props.openForm          
+            pageFirstDay: this.props.pageFirstDay, // первый день на странице календаря
+            grid_events: this.props.grid_events,   // события, попадающие на страницу календаря
+            openForm: this.props.openForm          // функция для открытия формы
         }
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({ pageFirstDay: nextProps.pageFirstDay,
-                             grid_events: nextProps.grid_events,
-                             openForm: nextProps.openForm });
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.pageFirstDay !== prevState.pageFirstDay) {
+            return ({ pageFirstDay: nextProps.pageFirstDay,
+                      grid_events: nextProps.grid_events,
+                      openForm: nextProps.openForm })
+        }
+        else return null
     }
+
     render() {
         let startDay = this.state.pageFirstDay.clone().subtract(1, "day");                  // -1 день из первого, так как map добавит к нему день
         let daysArray = [...Array(42)].map(() => moment(startDay.add(1, "day"))); // в каждой ячейке календаря находится день на 1 больше предыдущего
@@ -93,4 +97,3 @@ class CalendarGrid extends React.Component {
 }
 
 export { CalendarGrid };
-
