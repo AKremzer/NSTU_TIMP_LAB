@@ -1,7 +1,8 @@
 import moment from 'moment';
+import 'moment/locale/ru';
 import {useEffect, useState} from "react";
-import {CalendarTitle} from "../calendar-title";
-import {CalendarGrid} from "../calendar-grid";
+import {CalendarTitle} from "../calendar-title/calendar-title";
+import {CalendarGrid} from "../calendar-grid/calendar-grid";
 import {CalendarStyle, FormPosStyle, FormStyle, EventStyle, ButtonsWrap, ButtonsStyle} from './app-styles'
 
 // расположение json-server
@@ -24,7 +25,7 @@ function App() {
     const [events, setEvents] = useState([]);               // установка списка событий на текущий месяц
     const [today, setToday] = useState(moment())                     // установка текущего дня для отсчета отображаемых дней
 
-    moment.updateLocale("en", {week: {dow: 1}});
+    moment.locale('ru');
 
     let pageFirstDay = today.clone().startOf("month").startOf("week"); // первый день, отображаемый на странице календаря
     const startDayFilter = moment(pageFirstDay).format('X');                        // левая граница для поиска событий, попадающих в этот месяц
@@ -88,10 +89,10 @@ function App() {
      */
 
     const eventHandler = (e) => {
-        const url = (method == "Update" || e.target.id == "Delete") ? // при обращении к существующему элементу ссылка должна содержать id,
+        const url = (method == "Изменить" || e.target.id == "Delete") ? // при обращении к существующему элементу ссылка должна содержать id,
               `${jsonUrl}/events/${event.id}` : `${jsonUrl}/events`;
         const httpMethod = e.target.id == "Delete" ?                  // выбор HTTP-метода для обращения к серверу
-              'DELETE' : (method == "Update" ? 'PATCH' : 'POST');     // POST - создание события, PATCH - редактирование,DELETE - удаление
+              'DELETE' : (method == "Изменить" ? 'PATCH' : 'POST');     // POST - создание события, PATCH - редактирование,DELETE - удаление
         let options = {
            method: httpMethod,
            headers: { 'Content-Type': 'application/json' },
@@ -147,9 +148,9 @@ function App() {
                                         onChange = {e => changeEvent(e.target.value, "description")}
                             />
                             <ButtonsWrap>
-                                <ButtonsStyle onClick={cancelButton}>Cancel</ButtonsStyle>
+                                <ButtonsStyle onClick={cancelButton}>Отмена</ButtonsStyle>
                                 <ButtonsStyle id="Edit" onClick={eventHandler}>{method}</ButtonsStyle>
-                                <ButtonsStyle id="Delete" onClick={eventHandler}>Delete</ButtonsStyle>
+                                <ButtonsStyle id="Delete" onClick={eventHandler}>Удалить</ButtonsStyle>
                             </ButtonsWrap>
                         </FormStyle>
                     </FormPosStyle>
